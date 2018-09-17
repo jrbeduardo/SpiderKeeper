@@ -18,7 +18,16 @@ def main():
     ))
     if opts.verbose:
         app.logger.setLevel(logging.DEBUG)
-    scheduler = BackgroundScheduler()
+    scheduler = BackgroundScheduler({
+        'apscheduler.executors.default': {
+            'class': 'apscheduler.executors.pool:ThreadPoolExecutor',
+            'max_workers': str(opts.executorpool)
+        },
+        'apscheduler.executors.processpool': {
+            'type': 'processpool',
+            'max_workers': str(opts.processpool)
+        }
+    })
     add_jobs(scheduler)
     scheduler.start()
     app.logger.info(
@@ -65,7 +74,6 @@ def parse_opts(config):
                       ),
                       dest='database_url',
                       default=config.get('SQLALCHEMY_DATABASE_URI'))
-
     parser.add_option("--no-auth",
                       help="disable basic auth",
                       dest='no_auth',
@@ -74,6 +82,16 @@ def parse_opts(config):
                       help="log level",
                       dest='verbose',
                       action='store_true')
+
+    parser.add_option("--executor",
+                      help="ThreadPoolExecutor ,default: %s" % config.get('THREAD_POOL_EXECUTOR'),
+                      dest='executorpool',
+                      default=config.get('THREAD_POOL_EXECUTOR'))
+    parser.add_option("--process",
+                      help="processpool ,default: %s" % config.get('PROCESS_POOL'),
+                      dest='processpool',
+                      default=config.get('PROCESS_POOL'))
+
     return parser.parse_args()
 
 

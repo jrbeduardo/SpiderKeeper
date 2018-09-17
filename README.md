@@ -1,5 +1,7 @@
-# SpiderKeeper-2 
+# SpiderKeeper-2-1
 ### This is a fork of [SpiderKeeper](https://github.com/DormyMo/SpiderKeeper). [Here](https://github.com/kalombos/SpiderKeeper/blob/master/CHANGELOG.md) is the changes
+## 0.2.5 (2018-09-17)
+- add [APScheduler](https://apscheduler.readthedocs.io/en/latest/userguide.html#configuring-the-scheduler) executor & process options
 
 [![Latest Version](http://img.shields.io/pypi/v/SpiderKeeper-2.svg)](https://pypi.python.org/pypi/SpiderKeeper-2)
 [![Python Versions](https://img.shields.io/pypi/pyversions/SpiderKeeper-2.svg)](https://pypi.python.org/pypi/SpiderKeeper-2)
@@ -30,7 +32,7 @@ Current Support spider service
 
 
 ```
-pip install spiderkeeper-2
+pip install spiderkeeper-2-1
 ```
 
 ### Deployment
@@ -52,6 +54,8 @@ Options:
                         SpiderKeeper metadata database default: sqlite:////home/souche/SpiderKeeper.db
   --no-auth             disable basic auth
   -v, --verbose         log level
+  --executor            ThreadPoolExecutor ,default: 30
+  --process             processpool ,default: 3
   
 
 example:
@@ -85,7 +89,7 @@ Visit:
 
 - *Initial work* - [DormyMo](https://github.com/DormyMo)
 - *Fork author* - [kalombo](https://github.com/kalombos/)
-
+- *Fork kalombo* - [shiaukuan](https://github.com/shiaukuan/)
 
 ## License
 
