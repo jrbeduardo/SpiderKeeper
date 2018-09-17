@@ -9,7 +9,7 @@ setup(
     version=__version__,
     description='Admin ui for spider service',
     long_description=
-    'Go to https://github.com/kalombos/SpiderKeeper/ for more information.',
+    'Go to https://github.com/shiaukuan/SpiderKeeper/ for more information.',
     author=__author__,
     author_email='kuan60508@gmail.com',
     url='https://github.com/shiaukuan/SpiderKeeper/',
