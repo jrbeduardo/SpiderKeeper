@@ -28,7 +28,7 @@ setup(
         'Flask-SQLAlchemy==2.2',
         'itsdangerous==0.24',
         'Jinja2==2.9.6',
-        'MarkupSafe==1.0',
+        'MarkupSafe==1.1.1',
         'PyMySQL==0.7.11',
         'python-dateutil==2.6.0',
         'pytz==2017.2',
@@ -50,6 +50,6 @@ setup(
         'License :: OSI Approved :: MIT License',
         'Operating System :: OS Independent',
         'Programming Language :: Python :: 2.7',
-        'Programming Language :: Python :: 3.5',
+        'Programming Language :: Python :: 3.7',
     ],
 )
