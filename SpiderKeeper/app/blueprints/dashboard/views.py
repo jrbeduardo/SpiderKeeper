@@ -199,10 +199,10 @@ def spider_dashboard(project_id):
 
     avg_runtime_query = db.session.query(
         SpiderInstance.spider_name,
-        func.Avg(JobExecution.end_time - JobExecution.start_time).label('avg_runtime'),
+        func.Avg(func.julianday(JobExecution.end_time) - func.julianday(JobExecution.start_time)).label('avg_runtime'),
     ).outerjoin(JobInstance, JobInstance.spider_name == SpiderInstance.spider_name)\
         .outerjoin(JobExecution).filter(SpiderInstance.project_id == project_id)\
-        .filter(JobExecution.end_time != None)\
+        .filter(JobExecution.end_time != None, JobExecution.start_time != None)\
         .group_by(SpiderInstance.id)
 
     avg_runtime = dict(
@@ -212,9 +212,11 @@ def spider_dashboard(project_id):
     spiders = []
     for spider in SpiderInstance.query.filter(SpiderInstance.project_id == project_id).all():
         spider.last_runtime = last_runtime.get(spider.spider_name)
-        spider.avg_runtime = avg_runtime.get(spider.spider_name)
-        if spider.avg_runtime is not None:
-            spider.avg_runtime = spider.avg_runtime.total_seconds()
+        if avg_runtime.get(spider.spider_name) is not None:
+            spider.avg_runtime = str(datetime.timedelta(
+                hours=avg_runtime.get(spider.spider_name)
+                )
+            )
         spiders.append(spider)
     return render_template("spider_dashboard.html", spiders=spiders)
 

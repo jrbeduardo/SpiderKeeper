@@ -20,7 +20,7 @@
                 <td>{{ spider.id }}</td>
                 <td>{{ spider.spider_name }}</td>
                 <td>{{ spider.last_runtime if spider.last_runtime else '-' }}</td>
-                <td>{{ readable_time(spider.avg_runtime) }}</td>
+                <td>{{ spider.avg_runtime if spider.avg_runtime else '-'}}</td>
             </tr>
             {% endfor %}
         </table>
