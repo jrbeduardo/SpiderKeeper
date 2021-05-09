@@ -214,7 +214,7 @@ def spider_dashboard(project_id):
         spider.last_runtime = last_runtime.get(spider.spider_name)
         if avg_runtime.get(spider.spider_name) is not None:
             spider.avg_runtime = str(datetime.timedelta(
-                hours=avg_runtime.get(spider.spider_name)
+                days=avg_runtime.get(spider.spider_name)
                 )
             )
         spiders.append(spider)
