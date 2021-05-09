@@ -176,7 +176,7 @@ class JobExecution(Base):
             'end_time': self.end_time.strftime('%Y-%m-%d %H:%M:%S') if self.end_time else None,
             'running_status': self.running_status,
             'running_on': self.running_on,
-            'job_instance': self.job_instance.to_dict(), #self job_instance is not serializable
+            'job_instance': self.job_instance.to_dict() if self.job_instance else None, #self job_instance is not serializable
             'has_warnings': self.has_warnings(),
             'has_errors': self.has_errors(),
             'items_count': self.items_count if self.items_count is not None else '-',
