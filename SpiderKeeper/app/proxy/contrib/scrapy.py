@@ -80,8 +80,13 @@ class ScrapydProxy(SpiderServiceProxy):
         )
         return data['jobid'] if data and data['status'] == 'ok' else None
 
-    def cancel_spider(self, project_name, job_id):
-        post_data = dict(project=project_name, job=job_id)
+    def cancel_spider(self, project_name, job_id, signal=None):
+        post_data = dict(
+            project=project_name, 
+            job=job_id
+        )
+        if signal is not None:
+            post_data['signal'] = signal
         data = request(
             "post", self._scrapyd_url() + "/cancel.json", data=post_data, return_type="json"
         )

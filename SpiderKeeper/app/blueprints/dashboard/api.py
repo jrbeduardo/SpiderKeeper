@@ -413,12 +413,25 @@ class JobExecutionDetailCtrl(flask_restful.Resource):
                 "required": True,
                 "paramType": "path",
                 "dataType": 'string'
+            },
+            {
+                "name": "signal",
+                "description": "signal",
+                "required": False,
+                "paramType": "form",
+                "dataType": 'string'
             }
         ])
     def put(self, project_id, job_exec_id):
+        post_data = request.form
+        if post_data:
+            signal =  post_data.get('signal')
+        else: 
+            signal = None
+                            
         job_execution = JobExecution.query.filter_by(project_id=project_id, id=job_exec_id).first()
         if job_execution:
-            agent.cancel_spider(job_execution)
+            agent.cancel_spider(job_execution, signal=signal)
             return True
 
 api.add_resource(JobExecutionDetailCtrl, "/api/projects/<project_id>/jobexecs/<job_exec_id>")

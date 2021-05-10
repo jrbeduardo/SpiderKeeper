@@ -163,12 +163,12 @@ class SpiderAgent(object):
             db.session.add(job_execution)
             db.session.commit()
 
-    def cancel_spider(self, job_execution):
+    def cancel_spider(self, job_execution, signal=None):
         job_instance = JobInstance.query.get(job_execution.job_instance_id)
         project = Project.query.get(job_instance.project_id)
         for spider_service_instance in self.spider_service_instances:
             if spider_service_instance.server == job_execution.running_on:
-                if spider_service_instance.cancel_spider(project.project_name, job_execution.service_job_execution_id):
+                if spider_service_instance.cancel_spider(project.project_name, job_execution.service_job_execution_id, signal=signal):
                     job_execution.end_time = datetime.datetime.now()
                     job_execution.running_status = SpiderStatus.CANCELED
                     db.session.commit()
