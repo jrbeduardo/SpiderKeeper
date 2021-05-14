@@ -69,6 +69,7 @@ def project_index(project_id):
 
 @dashboard_bp.route("/project/<int:project_id>/delete")
 def project_delete(project_id):
+    db.session.execute('pragma foreign_keys=on')
     project = Project.query.get_or_404(project_id)
     agent.delete_project(project)
     db.session.delete(project)
@@ -160,6 +161,7 @@ def job_run(job_instance_id):
 
 @dashboard_bp.route("/job/<int:job_instance_id>/remove")
 def job_remove(job_instance_id):
+    db.session.execute('pragma foreign_keys=on')
     job_instance = JobInstance.query.get_or_404(job_instance_id)
     db.session.delete(job_instance)
     db.session.commit()
@@ -168,6 +170,7 @@ def job_remove(job_instance_id):
 
 @dashboard_bp.route("/project/<int:project_id>/jobs/remove")
 def jobs_remove(project_id):
+    db.session.execute('pragma foreign_keys=on')
     for job_instance in JobInstance.query.filter_by(project_id=project_id):
         db.session.delete(job_instance)
     db.session.commit()
