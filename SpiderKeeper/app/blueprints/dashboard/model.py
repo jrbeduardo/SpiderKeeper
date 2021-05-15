@@ -46,7 +46,7 @@ class SpiderInstance(Base):
             if not existed_spider_instance:
                 db.session.add(spider_instance)
                 db.session.commit()
-
+        db.session.execute('pragma foreign_keys=on')
         for spider in cls.query.filter_by(project_id=project_id).all():
             existed_spider = any(
                 spider.spider_name == s.spider_name
@@ -198,7 +198,7 @@ class JobExecution(Base):
                                 cls.running_status != SpiderStatus.CANCELED).all()
 
     @classmethod
-    def list_jobs(cls, project_id, each_status_limit=100):
+    def list_jobs(cls, project_id, each_status_limit=250):
         result = {}
         result['PENDING'] = [job_execution.to_dict() for job_execution in
                              JobExecution.query.filter_by(project_id=project_id,
