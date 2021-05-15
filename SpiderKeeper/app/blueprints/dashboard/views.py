@@ -161,8 +161,21 @@ def job_run(job_instance_id):
 
 @dashboard_bp.route("/job/<int:job_instance_id>/remove")
 def job_remove(job_instance_id):
-    db.session.execute('pragma foreign_keys=on')
     job_instance = JobInstance.query.get_or_404(job_instance_id)
+    n = 1    
+    while n>0:
+        for job_execution in JobExecution.query.filter(JobExecution.project_id == job_instance.project_id).filter(
+                                           JobExecution.running_status == SpiderStatus.PENDING):
+            if job_execution:
+                agent.cancel_spider(job_execution)
+        n = JobExecution.query.filter(JobExecution.project_id == job_instance.project_id).filter(
+                                           JobExecution.running_status == SpiderStatus.PENDING).count()
+    for job_execution in JobExecution.query.filter(JobExecution.project_id == job_instance.project_id).filter(
+                                       JobExecution.running_status == SpiderStatus.RUNNING):
+        if job_execution:
+            agent.cancel_spider(job_execution)
+
+    db.session.execute('pragma foreign_keys=on')
     db.session.delete(job_instance)
     db.session.commit()
     return redirect(request.referrer, code=302)
@@ -170,7 +183,20 @@ def job_remove(job_instance_id):
 
 @dashboard_bp.route("/project/<int:project_id>/jobs/remove")
 def jobs_remove(project_id):
-    db.session.execute('pragma foreign_keys=on')
+    n = 1    
+    while n>0:
+        for job_execution in JobExecution.query.filter(JobExecution.project_id == project_id).filter(
+                                           JobExecution.running_status == SpiderStatus.PENDING):
+                if job_execution:
+                    agent.cancel_spider(job_execution)
+        n = JobExecution.query.filter(JobExecution.project_id == project_id).filter(
+                                       JobExecution.running_status == SpiderStatus.PENDING).count()
+
+    for job_execution in JobExecution.query.filter(JobExecution.project_id == project_id).filter(
+                                       JobExecution.running_status == SpiderStatus.RUNNING):
+            if job_execution:
+                agent.cancel_spider(job_execution)        
+    db.session.execute('pragma foreign_keys=on')    
     for job_instance in JobInstance.query.filter_by(project_id=project_id):
         db.session.delete(job_instance)
     db.session.commit()
