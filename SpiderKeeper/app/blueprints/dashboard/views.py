@@ -16,7 +16,7 @@ from werkzeug.utils import secure_filename
 from SpiderKeeper.app.proxy import agent
 from SpiderKeeper.app.extensions.sqlalchemy import db
 from SpiderKeeper.app.blueprints.dashboard.model import JobInstance, Project, JobExecution, \
-    SpiderInstance, JobRunType
+    SpiderInstance, JobRunType, SpiderStatus
 
 dashboard_bp = Blueprint('dashboard', __name__)
 
