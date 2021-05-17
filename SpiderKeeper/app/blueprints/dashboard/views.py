@@ -12,6 +12,7 @@ from flask import render_template
 from flask import session
 from sqlalchemy import func
 from werkzeug.utils import secure_filename
+from  scrapyd_api import ScrapydAPI
 
 from SpiderKeeper.app.proxy import agent
 from SpiderKeeper.app.extensions.sqlalchemy import db
@@ -162,19 +163,25 @@ def job_run(job_instance_id):
 @dashboard_bp.route("/job/<int:job_instance_id>/remove")
 def job_remove(job_instance_id):
     job_instance = JobInstance.query.get_or_404(job_instance_id)
-    n = 1    
-    while n>0:
+    project_name =  Project.query.filter(Project.id == job_instance.project_id).first().project_name    
+            
+    for server in agent.servers:   
+        scrapyd = ScrapydAPI(server)
         for job_execution in JobExecution.query.filter(JobExecution.project_id == job_instance.project_id).filter(
-                                           JobExecution.running_status == SpiderStatus.PENDING):
-            if job_execution:
-                agent.cancel_spider(job_execution)
-        n = JobExecution.query.filter(JobExecution.project_id == job_instance.project_id).filter(
-                                           JobExecution.running_status == SpiderStatus.PENDING).count()
-    for job_execution in JobExecution.query.filter(JobExecution.project_id == job_instance.project_id).filter(
-                                       JobExecution.running_status == SpiderStatus.RUNNING):
-        if job_execution:
+                                               JobExecution.running_status == SpiderStatus.PENDING):
+            prev_status = scrapyd.cancel(
+                project_name, 
+                job_execution.service_job_execution_id, 
+                signal='KILL'
+            )
+        for job_execution in JobExecution.query.filter(JobExecution.project_id == job_instance.project_id).filter(
+                                           JobExecution.running_status == SpiderStatus.RUNNING):
             agent.cancel_spider(job_execution)
-
+            prev_status = scrapyd.cancel(
+                project_name, 
+                job_execution.service_job_execution_id, 
+                signal='KILL'
+            )
     db.session.execute('pragma foreign_keys=on')
     db.session.delete(job_instance)
     db.session.commit()
@@ -183,25 +190,27 @@ def job_remove(job_instance_id):
 
 @dashboard_bp.route("/project/<int:project_id>/jobs/remove")
 def jobs_remove(project_id):
-    n = 1    
-    while n>0:
-        for job_execution in JobExecution.query.filter(JobExecution.project_id == project_id).filter(
-                                           JobExecution.running_status == SpiderStatus.PENDING):
-                if job_execution:
-                    agent.cancel_spider(job_execution)
-        n = JobExecution.query.filter(JobExecution.project_id == project_id).filter(
-                                       JobExecution.running_status == SpiderStatus.PENDING).count()
-
-    for job_execution in JobExecution.query.filter(JobExecution.project_id == project_id).filter(
-                                       JobExecution.running_status == SpiderStatus.RUNNING):
-            if job_execution:
-                agent.cancel_spider(job_execution)        
+    servers = agent.servers
+    project =  Project.query.filter(Project.id == project_id).first() 
     db.session.execute('pragma foreign_keys=on')    
     for job_instance in JobInstance.query.filter_by(project_id=project_id):
         db.session.delete(job_instance)
     db.session.commit()
+    for server in servers:    
+        scrapyd = ScrapydAPI(server)
+        for job in scrapyd.list_jobs(project.project_name)['pending']:
+            jobid = job['id']
+            prev_status = scrapyd.cancel(
+                project.project_name, 
+                jobid, 
+                signal='KILL')
+        for job in scrapyd.list_jobs(project.project_name)['running']:
+            jobid = job['id']
+            prev_status = scrapyd.cancel(
+                project.project_name, 
+                jobid, 
+                signal='KILL')
     return redirect(request.referrer, code=302)
-
 
 @dashboard_bp.route("/project/<int:project_id>/job/<int:job_instance_id>/switch")
 def job_switch(project_id, job_instance_id):
