@@ -1,8 +1,6 @@
 # SpiderKeeper
 ### This is a fork of [SpiderKeeper](https://github.com/shiaukuan/SpiderKeeper)
 
-A scalable admin ui for spider service 
-
 ## Features
 
 - Manage your spiders from a dashboard. Schedule them to run automatically
@@ -85,10 +83,6 @@ Visit:
 - *Fork author* - [kalombo](https://github.com/kalombos/)
 - *Fork kalombo* - [shiaukuan](https://github.com/shiaukuan/)
 - *Fork jrbeduardo* - [jrbeduardo](https://github.com/jrbeduardo/)
-
-## License
-
-This project is licensed under the MIT License.
 
 ## Contributing
 
