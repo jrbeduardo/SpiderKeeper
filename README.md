@@ -1,5 +1,5 @@
-# SpiderKeeper-2-1
-### This is a fork of [SpiderKeeper](https://github.com/DormyMo/SpiderKeeper). [Here](https://github.com/kalombos/SpiderKeeper/blob/master/CHANGELOG.md) is the changes
+# SpiderKeeper
+### This is a fork of [SpiderKeeper](https://github.com/shiaukuan/SpiderKeeper). [Here](https://github.com/kalombos/SpiderKeeper/blob/master/CHANGELOG.md) is the changes
 ## 0.2.5 (2018-09-17)
 - add [APScheduler](https://apscheduler.readthedocs.io/en/latest/userguide.html#configuring-the-scheduler) executor & process options
 
@@ -90,6 +90,7 @@ Visit:
 - *Initial work* - [DormyMo](https://github.com/DormyMo)
 - *Fork author* - [kalombo](https://github.com/kalombos/)
 - *Fork kalombo* - [shiaukuan](https://github.com/shiaukuan/)
+- *Fork jrbeduardo* - [shiaukuan](https://github.com/jrbeduardo/)
 
 ## License
 
