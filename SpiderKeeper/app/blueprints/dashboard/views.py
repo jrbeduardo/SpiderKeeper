@@ -1,8 +1,8 @@
 import datetime
 import os
 import tempfile
-
-
+from sqlalchemy import func
+from SpiderKeeper import config
 import requests
 from flask import Blueprint, request, Response
 from flask import url_for
@@ -292,7 +292,15 @@ def project_stats(project_id):
     Project.query.get_or_404(project_id)
     session['project_id'] = project_id
     run_stats = JobExecution.list_run_stats_by_hours(project_id)
-    return render_template("project_stats.html", run_stats=run_stats)
+    pending_stats = JobExecution.list_jobs_stats(project_id,'pending')
+    running_stats = JobExecution.list_jobs_stats(project_id,'running')
+    return render_template(
+        "project_stats.html", 
+        run_stats=run_stats, 
+        pending_stats = pending_stats,
+        running_stats = running_stats,
+        time =datetime.datetime.now().ctime()
+    )
 
 
 @dashboard_bp.route("/project/<int:project_id>/server/stats")
@@ -300,4 +308,6 @@ def service_stats(project_id):
     Project.query.get_or_404(project_id)
     session['project_id'] = project_id
     run_stats = JobExecution.list_run_stats_by_hours(project_id)
-    return render_template("server_stats.html", run_stats=run_stats)
+    return render_template(
+        "server_stats.html", 
+        run_stats=run_stats)
