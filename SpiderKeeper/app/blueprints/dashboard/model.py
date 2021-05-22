@@ -4,6 +4,9 @@ import re
 from sqlalchemy import desc
 from sqlalchemy.orm import relation
 from SpiderKeeper.app.extensions.sqlalchemy import db, Base
+from scrapyd_api import ScrapydAPI
+from sqlalchemy import func
+from SpiderKeeper import config
 
 
 class Project(Base):
@@ -231,3 +234,19 @@ class JobExecution(Base):
             hour_key = job_execution.create_time.strftime('%Y-%m-%d %H:00:00')
             result[hour_key] += 1
         return [dict(key=hour_key, value=result[hour_key]) for hour_key in hour_keys]
+
+
+    @classmethod
+    def list_jobs_stats(cls, project_id, status): 
+        urls = config.SERVERS
+        name_project = Project.query.get(project_id).project_name
+        scrapyds=[]
+        for url in urls:
+            scrapyds.append(ScrapydAPI(url))
+        jobs=[]        
+        for instance in scrapyds:
+            jobs.append(dict(
+                key=instance.target,
+                value=len(instance.list_jobs(name_project)[status])        
+            ))
+        return jobs
