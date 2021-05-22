@@ -3,22 +3,67 @@
 <h1>Running Stats</h1>
 {% endblock %}
 {% block content_body %}
-<div class="box">
-    <div class="box-header">
-        <h3 class="box-title">Spider Running Stats (last 24 hours)</h3>
-    </div>
-    <div class="box-body">
-        <div class="chart">
-            <canvas id="run-stats-chart" style="height:230px"></canvas>
-        </div>
-    </div>
-    <div class="box-footer">
 
-    </div>
+<div class="row">
+    <div class="col-md-12">
+			<div class="box">
+			    <div class="box-header">
+			        <h3 class="box-title">Spider Running Stats (last 24 hours)</h3>
+			    </div>
+			    <div class="box-body">
+			        <div class="chart">
+			            <canvas id="run-stats-chart" style="height:230px"></canvas>
+			        </div>
+			    </div>
+			    <div class="box-footer">
+
+			    </div>
+			</div>
+		</div>
 </div>
+
+<div class="row">
+  <div class="col-md-6">
+
+		<div class="box">
+		    <div class="box-header">
+		        <h3 class="box-title">Jobs Pending ({{time}})</h3>
+		    </div>
+		    <div class="box-body">
+		        <div class="chart">
+		        		<canvas id="jobs-pending-chart" style="height:230px"></canvas>
+		        </div>
+		    </div>
+		    <div class="box-footer">
+		    	<h4>Total: {{ pending_stats | sum(attribute='value') }} </h4>
+		    </div>
+		</div>
+	</div>
+  <div class="col-md-6">
+
+		<div class="box">
+		    <div class="box-header">
+		        <h3 class="box-title">Jobs Running ({{time}})</h3>
+		    </div>
+		    <div class="box-body">
+		        <div class="chart">
+		        		<canvas id="jobs-running-chart" style="height:230px"></canvas>
+		        </div>
+		    </div>
+		    <div class="box-footer">
+		    	<h4>Total: {{ running_stats | sum(attribute='value') }} </h4>
+		    </div>
+		</div>
+	</div>
+
+</div>
+
+
+
 {% endblock %}
 {% block script %}
 <script src="{{ url_for('static', filename='js/Chart.min.js') }}"></script>
+
 <script>
     //-------------
     //- BAR CHART -
@@ -70,5 +115,119 @@
 
     runStatsChartOptions.datasetFill = true;
     runStatsChart.Line(runStatsChartData, runStatsChartOptions);
+</script>
+
+<script>
+    //-------------
+    //- BAR CHART -
+    //-------------
+
+    var runStatsData = {
+        labels: [{% for item in pending_stats %} '{{ item.key }}', {% endfor %}],
+        datasets: [
+            {
+                label: "Electronics",
+                fillColor: "rgba(210, 214, 222, 1)",
+                strokeColor: "rgba(210, 214, 222, 1)",
+                pointColor: "rgba(210, 214, 222, 1)",
+                pointStrokeColor: "#c1c7d1",
+                pointHighlightFill: "#fff",
+                pointHighlightStroke: "rgba(220,220,220,1)",
+                data: [{% for item in pending_stats %} {{ item.value }}, {% endfor %}]
+            }
+        ]
+    };
+
+    var runStatsChartCanvas = $("#jobs-pending-chart").get(0).getContext("2d");
+    var runStatsChart = new Chart(runStatsChartCanvas);
+    var runStatsChartData = runStatsData;
+    var runStatsChartOptions = {
+        //Boolean - Whether the scale should start at zero, or an order of magnitude down from the lowest value
+        scaleBeginAtZero: true,
+        //Boolean - Whether grid lines are shown across the chart
+        scaleShowGridLines: true,
+        //String - Colour of the grid lines
+        scaleGridLineColor: "rgba(0,0,0,.05)",
+        //Number - Width of the grid lines
+        scaleGridLineWidth: 1,
+        pointRadius: 0,
+        lineTension: 0,
+        borderWidth: 2,
+        //Boolean - Whether to show horizontal lines (except X axis)
+        scaleShowHorizontalLines: true,
+        //Boolean - Whether to show vertical lines (except Y axis)
+        scaleShowVerticalLines: true,
+        //Boolean - If there is a stroke on each bar
+        barShowStroke: true,
+        //Number - Pixel width of the bar stroke
+        barStrokeWidth: 2,
+        //Number - Spacing between each of the X value sets
+        barValueSpacing: 5,
+        //Number - Spacing between data sets within X values
+        barDatasetSpacing: 1,
+        //Boolean - whether to make the chart responsive
+        responsive: true,
+        maintainAspectRatio: true
+    };
+
+    runStatsChartOptions.datasetFill = false;
+    runStatsChart.Bar(runStatsChartData, runStatsChartOptions);
+</script>
+
+<script>
+		//-------------
+    //- BAR CHART -
+    //-------------
+
+    var runStatsData = {
+        labels: [{% for item in running_stats %} '{{ item.key }}', {% endfor %}],
+        datasets: [
+            {
+                label: "Electronics",
+                fillColor: "rgba(210, 214, 222, 1)",
+                strokeColor: "rgba(210, 214, 222, 1)",
+                pointColor: "rgba(210, 214, 222, 1)",
+                pointStrokeColor: "#c1c7d1",
+                pointHighlightFill: "#fff",
+                pointHighlightStroke: "rgba(220,220,220,1)",
+                data: [{% for item in running_stats %} {{ item.value }}, {% endfor %}]
+            }
+        ]
+    };
+
+    var runStatsChartCanvas = $("#jobs-running-chart").get(0).getContext("2d");
+    var runStatsChart = new Chart(runStatsChartCanvas);
+    var runStatsChartData = runStatsData;
+    var runStatsChartOptions = {
+        //Boolean - Whether the scale should start at zero, or an order of magnitude down from the lowest value
+        scaleBeginAtZero: true,
+        //Boolean - Whether grid lines are shown across the chart
+        scaleShowGridLines: true,
+        //String - Colour of the grid lines
+        scaleGridLineColor: "rgba(0,0,0,.05)",
+        //Number - Width of the grid lines
+        scaleGridLineWidth: 1,
+        pointRadius: 0,
+        lineTension: 0,
+        borderWidth: 2,
+        //Boolean - Whether to show horizontal lines (except X axis)
+        scaleShowHorizontalLines: true,
+        //Boolean - Whether to show vertical lines (except Y axis)
+        scaleShowVerticalLines: true,
+        //Boolean - If there is a stroke on each bar
+        barShowStroke: true,
+        //Number - Pixel width of the bar stroke
+        barStrokeWidth: 2,
+        //Number - Spacing between each of the X value sets
+        barValueSpacing: 5,
+        //Number - Spacing between data sets within X values
+        barDatasetSpacing: 1,
+        //Boolean - whether to make the chart responsive
+        responsive: true,
+        maintainAspectRatio: true
+    };
+
+    runStatsChartOptions.datasetFill = false;
+    runStatsChart.Bar(runStatsChartData, runStatsChartOptions);
 </script>
 {% endblock %}
