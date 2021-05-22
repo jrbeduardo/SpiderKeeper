@@ -32,7 +32,7 @@ Current Support spider service
 
 
 ```
-pip install spiderkeeper-2-1
+pip install git+https://github.com/jrbeduardo/SpiderKeeper.git
 ```
 
 ### Deployment
