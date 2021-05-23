@@ -292,8 +292,8 @@ def project_stats(project_id):
     Project.query.get_or_404(project_id)
     session['project_id'] = project_id
     run_stats = JobExecution.list_run_stats_by_hours(project_id)
-    pending_stats = JobExecution.list_jobs_stats(project_id,'pending')
-    running_stats = JobExecution.list_jobs_stats(project_id,'running')
+    pending_stats = JobExecution.list_jobs_stats('pending')
+    running_stats = JobExecution.list_jobs_stats('running')
     return render_template(
         "project_stats.html", 
         run_stats=run_stats, 

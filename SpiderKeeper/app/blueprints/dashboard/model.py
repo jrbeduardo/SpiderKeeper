@@ -237,14 +237,18 @@ class JobExecution(Base):
 
 
     @classmethod
-    def list_jobs_stats(cls, project_id, status): 
-        urls = config.SERVERS
-        name_project = Project.query.get(project_id).project_name
+    def list_jobs_stats(cls, status): 
+        urls = config.SERVERS[1:]
+        name_projects =[ name[0] for name in db.session.query(Project.project_name).all()]
+        from pprint import pprint 
+        for i in range(20): 
+            pprint(name_projects)
+            pprint(urls)        
         scrapyds=[]
         for url in urls:
             scrapyds.append(ScrapydAPI(url))
         jobs=[]        
-        for instance in scrapyds:
+        for instance, name_project in zip(scrapyds,name_projects):
             jobs.append(dict(
                 key=instance.target,
                 value=len(instance.list_jobs(name_project)[status])        
