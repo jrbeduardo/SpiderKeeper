@@ -221,19 +221,21 @@ class JobExecution(Base):
     @classmethod
     def list_run_stats_by_hours(cls, project_id):
         result = {}
-        hour_keys = []
+        periods=[]
         last_time = datetime.datetime.now() - datetime.timedelta(hours=23)
         last_time = datetime.datetime(last_time.year, last_time.month, last_time.day, last_time.hour)
         for hour in range(23, -1, -1):
-            time_tmp = datetime.datetime.now() - datetime.timedelta(hours=hour)
-            hour_key = time_tmp.strftime('%Y-%m-%d %H:00:00')
-            hour_keys.append(hour_key)
+            next_time = last_time + datetime.timedelta(hours=1)           
+            periods.append((last_time,next_time))
+            hour_key = last_time.strftime('%Y-%m-%d %H:00:00')
             result[hour_key] = 0  # init
-        for job_execution in JobExecution.query.filter(JobExecution.project_id == project_id,
-                                                       JobExecution.date_created >= last_time).all():
-            hour_key = job_execution.create_time.strftime('%Y-%m-%d %H:00:00')
-            result[hour_key] += 1
-        return [dict(key=hour_key, value=result[hour_key]) for hour_key in hour_keys]
+            last_time = next_time
+        for hour_key, period in zip(result.keys(), periods): 
+            result[hour_key] = JobExecution.query.filter(
+                                    JobExecution.project_id == project_id,
+                                    JobExecution.create_time >= period[0],
+                                    JobExecution.create_time < period[1]).count()
+        return [dict(key=hour_key, value=result[hour_key]) for hour_key in result.keys()]
 
 
     @classmethod
