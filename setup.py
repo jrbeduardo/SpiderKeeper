@@ -36,7 +36,8 @@ setup(
         'six==1.10.0',
         'SQLAlchemy==1.1.9',
         'tzlocal==1.3',
-        'Werkzeug==0.12.1'
+        'Werkzeug==0.12.1',
+        'python-scrapyd-api>=2.1.2' 
     ],
 
     entry_points={
